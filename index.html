@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#0d0a1a" />
+  <title>Raja Rani — Card Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══ HOME PAGE ══ -->
+  <div id="page-home" class="page active">
+    <div class="container">
+      <header class="game-header">
+        <span class="crown-icon">♛</span>
+        <h1 class="game-title">Raja Rani</h1>
+        <p class="game-subtitle">The Royal Card Game</p>
+      </header>
+
+      <p class="hero-text">
+        A classic Indian social card game.<br/>
+        Distribute roles, reveal destinies, play together.
+      </p>
+
+      <div class="home-buttons">
+        <button class="btn btn-primary" onclick="showPage('host-setup')">👑 &nbsp;Host a Game</button>
+        <button class="btn btn-secondary" onclick="showPage('join-setup')">🎴 &nbsp;Join a Game</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ HOST SETUP PAGE ══ -->
+  <div id="page-host-setup" class="page">
+    <div class="container">
+      <button class="back-btn" onclick="showPage('home')">← Back</button>
+
+      <header class="game-header" style="padding-top:20px">
+        <h1 class="game-title" style="font-size:1.8rem">Host a Game</h1>
+      </header>
+
+      <div class="card-panel">
+        <p class="section-title">Your Name</p>
+        <div class="form-group">
+          <input type="text" id="host-name" placeholder="Enter your name" maxlength="20" />
+        </div>
+      </div>
+
+      <div class="card-panel">
+        <p class="section-title">Configure Cards</p>
+        <div class="form-group">
+          <label>👑 &nbsp;Number of Kings</label>
+          <input type="number" id="king-count" value="1" min="0" max="20" />
+        </div>
+        <div class="form-group">
+          <label>👸 &nbsp;Number of Queens</label>
+          <input type="number" id="queen-count" value="1" min="0" max="20" />
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>🕵️ &nbsp;Number of Thieves</label>
+          <input type="number" id="thief-count" value="1" min="0" max="20" />
+        </div>
+      </div>
+
+      <div id="host-error" class="error-msg"></div>
+
+      <button class="btn btn-primary" onclick="createRoom()">Create Room ✨</button>
+    </div>
+  </div>
+
+  <!-- ══ JOIN SETUP PAGE ══ -->
+  <div id="page-join-setup" class="page">
+    <div class="container">
+      <button class="back-btn" onclick="showPage('home')">← Back</button>
+
+      <header class="game-header" style="padding-top:20px">
+        <h1 class="game-title" style="font-size:1.8rem">Join a Game</h1>
+      </header>
+
+      <div class="card-panel">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="join-name" placeholder="Enter your name" maxlength="20" />
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Room Code</label>
+          <input type="text" id="join-code" placeholder="e.g. ABCDE" maxlength="5"
+            style="text-transform:uppercase; letter-spacing:0.2em; font-size:1.2rem"
+            oninput="this.value=this.value.toUpperCase()" />
+        </div>
+      </div>
+
+      <div id="join-error" class="error-msg"></div>
+
+      <button class="btn btn-primary" onclick="joinRoom()">Join Room →</button>
+    </div>
+  </div>
+
+  <!-- ══ WAITING ROOM / GAME PAGE ══ -->
+  <div id="page-room" class="page">
+    <div class="container" style="padding-top:0">
+      <div class="room-header">
+        <div class="room-header-code">
+          Room Code
+          <span id="room-display-code">—</span>
+        </div>
+        <div class="room-header-player">
+          Playing as
+          <span id="room-display-name">—</span>
+        </div>
+      </div>
+
+      <!-- CONFIG PILLS -->
+      <div id="config-pills-wrap" class="config-pills"></div>
+
+      <!-- PLAYER LIST -->
+      <div class="players-section card-panel" style="padding:20px">
+        <div class="players-label">
+          Players
+          <span class="player-count-badge" id="player-count-badge">0</span>
+        </div>
+        <ul class="players-list" id="players-list"></ul>
+      </div>
+
+      <!-- HOST CONTROLS -->
+      <div id="host-controls" style="display:none">
+        <div id="shuffle-error" class="error-msg"></div>
+        <button class="btn btn-teal" onclick="shuffleCards()" id="shuffle-btn">
+          🔀 &nbsp;Shuffle &amp; Deal Cards
+        </button>
+      </div>
+
+      <!-- WAITING FOR HOST -->
+      <div id="waiting-for-host" class="info-msg" style="display:none">
+        Waiting for the host to deal cards…
+      </div>
+
+      <!-- CARD REVEAL AREA -->
+      <div id="card-reveal-area" class="game-card-wrapper" style="display:none">
+        <div id="playing-card" class="playing-card">
+          <span class="card-corner top-left">
+            <span id="card-corner-emoji-tl"></span><br>
+            <span id="card-corner-label-tl"></span>
+          </span>
+          <span class="card-emoji" id="card-main-emoji"></span>
+          <span class="card-label" id="card-main-label"></span>
+          <span class="card-corner bottom-right">
+            <span id="card-corner-emoji-br"></span><br>
+            <span id="card-corner-label-br"></span>
+          </span>
+        </div>
+        <div style="margin-top:20px; text-align:center; color:var(--text-muted); font-size:0.85rem; font-family:'Cinzel',serif; letter-spacing:0.1em;">
+          Your secret role — don't show anyone!
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
